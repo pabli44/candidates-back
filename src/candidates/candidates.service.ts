@@ -45,7 +45,7 @@ export class CandidatesService {
         return candidate;
     }
 
-    /*
+    
     create(candidate) {
         this.candidates.push(candidate);
         return candidate;
@@ -58,7 +58,7 @@ export class CandidatesService {
             return updatedCandidate;
         }
         return null;
-    }*/
+    }
 
     delete(id: number): Candidate {
         const candidate = this.findOne(id);
