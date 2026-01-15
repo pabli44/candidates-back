@@ -21,15 +21,15 @@ export class CandidatesController {
         return this.candidatesService.findOne(id);
     }
 
-    @Post()
+    /*@Post()
     createCandidate(@Body() candidate: CreateCandidateDto): string {
         return 'This action adds a new Candidate';
-    }
+    }*/
 
-    @Put(':id')
+    /*@Put(':id')
     update(@Body() candidate: CreateCandidateDto, @Param('id') id: number): string {
         return 'This action update a Candidate';
-    }
+    }*/
 
     @Delete(':id')
     delete(@Param('id', ParseIntPipe) id: number): Candidate {
