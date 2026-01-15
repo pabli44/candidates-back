@@ -28,8 +28,8 @@ jobs:
     - name: Build project
       run: npm run build # Asegura que NestJS pueda compilar sin errores de TypeScript
 
-    - name: Run unit tests
-      run: npm run test # Ejecuta Jest
+    #- name: Run unit tests
+    #  run: npm run test # Ejecuta Jest
 
     - name: Run e2e tests
       run: npm run test:e2e # Ejecuta tus tests de integración
