@@ -1,28 +1,35 @@
-name: Node.js CI
+name: NestJS CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
 
 jobs:
-  build:
+  build_and_test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x] # Prueba en múltiples versiones
-
     steps:
-    - uses: actions/checkout@v4 # Clona tu repositorio
+    - uses: actions/checkout@v4
 
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm' # Cachea dependencias para ir más rápido
+        node-version: 20
+        cache: 'npm'
 
-    - run: npm install
-    - run: npm run build --if-present
-    - run: npm test
+    - name: Install dependencies
+      run: npm ci # Usa 'ci' en lugar de 'install' para entornos de CI, es más rápido y exacto
+
+    - name: Lint check
+      run: npm run lint # Verifica que el código siga tus reglas de estilo
+
+    - name: Build project
+      run: npm run build # Asegura que NestJS pueda compilar sin errores de TypeScript
+
+    - name: Run unit tests
+      run: npm run test # Ejecuta Jest
+
+    - name: Run e2e tests
+      run: npm run test:e2e # Ejecuta tus tests de integración
