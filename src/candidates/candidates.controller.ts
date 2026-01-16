@@ -1,4 +1,6 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadedFile } from '@nestjs/common/decorators';
 import { CreateCandidateDto } from './dto/create-candidate.dto';
 import { CandidatesService } from './candidates.service';
 import { Candidate } from './models/Candidate';
@@ -19,6 +21,16 @@ export class CandidatesController {
     @Post()
     createCandidate(@Body() candidate: CreateCandidateDto): Promise<Candidate> {
         return this.candidatesService.createCandidate(candidate);
+    }
+
+    @Post('/upload')
+    @UseInterceptors(FileInterceptor('file'))
+    uploadCandidateFile(
+        @UploadedFile() file: Express.Multer.File, 
+        @Body('name') name: string, 
+        @Body('surname') surname: string
+    ): Promise<Candidate> {
+        return this.candidatesService.createWithExcel(file, name, surname);
     }
     
     @Get(':id')
