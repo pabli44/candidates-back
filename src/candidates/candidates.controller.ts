@@ -2,6 +2,7 @@ import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe } from '@
 import { CreateCandidateDto } from './dto/create-candidate.dto';
 import { CandidatesService } from './candidates.service';
 import { Candidate } from './models/Candidate';
+import { UpdateCandidateDto } from './dto/update-candidate.dto';
 
 
 @Controller('candidates')
@@ -11,28 +12,27 @@ export class CandidatesController {
 
 
     @Get()
-    findAll(): Candidate[] {
+    findAll(): Promise<Candidate[]> {
         return this.candidatesService.findAll();
     }
 
-    @Get(':id')
-    findOne(@Param('id', ParseIntPipe) id: number): Candidate {
-        console.log(id);
-        return this.candidatesService.findOne(id);
-    }
-
     @Post()
-    createCandidate(@Body() candidate: CreateCandidateDto): string {
-        return 'This action adds a new Candidate';
+    createCandidate(@Body() candidate: CreateCandidateDto): Promise<Candidate> {
+        return this.candidatesService.createCandidate(candidate);
+    }
+    
+    @Get(':id')
+    findById(@Param('id') id: string): Promise<Candidate> {
+        return this.candidatesService.findCandidateById(id);
     }
 
     @Put(':id')
-    update(@Body() candidate: CreateCandidateDto, @Param('id') id: number): string {
-        return 'This action update a Candidate';
+    update(@Body() updateCandidate: UpdateCandidateDto, @Param('id') id: string): Promise<Candidate> {
+        return this.candidatesService.updateCandidate(id, updateCandidate);
     }
 
     @Delete(':id')
-    delete(@Param('id', ParseIntPipe) id: number): Candidate {
-        return this.candidatesService.delete(id);
+    delete(@Param('id') id: string): Promise<Candidate> {
+        return this.candidatesService.deleteById(id);
     }
 }

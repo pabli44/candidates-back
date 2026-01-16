@@ -22,14 +22,14 @@ jobs:
     - name: Install dependencies
       run: npm ci # Usa 'ci' en lugar de 'install' para entornos de CI, es más rápido y exacto
 
-    #- name: Lint check
-    #  run: npm run lint # Verifica que el código siga tus reglas de estilo
+    - name: Lint check
+      run: npm run lint # Verifica que el código siga tus reglas de estilo
 
     - name: Build project
       run: npm run build # Asegura que NestJS pueda compilar sin errores de TypeScript
 
-    #- name: Run unit tests
-    #  run: npm run test # Ejecuta Jest
+    - name: Run unit tests
+      run: npm run test # Ejecuta Jest
 
     - name: Run e2e tests
       run: npm run test:e2e # Ejecuta tus tests de integración
