@@ -19,7 +19,6 @@ export class CandidatesService {
 
     async createCandidate(candidate: CreateCandidateDto){
         const newCandidate = new this.candidateModel(candidate);
-        console.log('Candidate created: '+ newCandidate);
         return await newCandidate.save();
     }
 
