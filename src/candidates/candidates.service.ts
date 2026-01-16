@@ -1,71 +1,57 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import { Candidate } from './models/Candidate';
+import { Model } from 'mongoose';
+import { CreateCandidateDto } from './dto/create-candidate.dto';
+import { UpdateCandidateDto } from './dto/update-candidate.dto';
 
 
 @Injectable()
 export class CandidatesService {
 
-    candidates: Candidate[] = [
-        {
-            id: 1, 
-            name: 'John Doe', 
-            surname: 'Doe', 
-            seniority: 'Senior', 
-            years: 5, 
-            availability: true
-        },
-        { 
-            id: 2, 
-            name: 'Jane Smith', 
-            surname: 'Smith', 
-            seniority: 'Junior', 
-            years: 1, 
-            availability: false 
-        },
-        {
-            id: 3,
-            name: 'Bob Johnson',
-            surname: 'Johnson',
-            seniority: 'Mid-Level',
-            years: 3,
-            availability: true
-        }
-    ]
+    constructor(@InjectModel(Candidate.name) private candidateModel: Model<Candidate>) {}
 
-    findAll(): Candidate[] {
-        return this.candidates;
+
+
+    async findAll(): Promise<Candidate[]> {
+        return this.candidateModel.find().exec();
     }
 
-    findOne(id: number): Candidate {
-        const candidate = this.candidates.find(candidate => candidate.id === id);
-        if (!candidate) {
+    async createCandidate(candidate: CreateCandidateDto){
+        const newCandidate = new this.candidateModel(candidate);
+        return await newCandidate.save();
+    }
+
+    async findCandidateById(id: string): Promise<Candidate> {
+        const findCandidate = await this.candidateModel.findById(id);
+        if(!findCandidate){
             throw new NotFoundException(`Candidate with id ${id} not found`);
         }
 
-        return candidate;
+        return findCandidate;
     }
 
-    
-    create(candidate) {
-        this.candidates.push(candidate);
-        return candidate;
-    }
+    async updateCandidate(id: string, updateCandidate: UpdateCandidateDto): Promise<Candidate> {
+        const updatedCandidate = await this.candidateModel
+            .findByIdAndUpdate(
+                id, 
+                { $set: updateCandidate }, 
+                { new: true, runValidators: true } 
+            )
+            .exec();
 
-    update(id: number, updatedCandidate) {
-        const index = this.candidates.findIndex(candidate => candidate.id === id);
-        if (index !== -1) {
-            this.candidates[index] = updatedCandidate;
-            return updatedCandidate;
+        if (!updatedCandidate) {
+            throw new NotFoundException(`Candidate with id ${id} not found`);
         }
-        return null;
+
+        return updatedCandidate;
     }
 
-    delete(id: number): Candidate {
-        const candidate = this.findOne(id);
-        this.candidates.splice(candidate.id - 1, 1);
-
-        return candidate;
+    async deleteById(id: string): Promise<Candidate> {
+        const deletedCandidate = await this.candidateModel.findByIdAndDelete(id);
+        if (!deletedCandidate) {
+            throw new NotFoundException(`Candidate with id ${id} not found`);
+        }
+        return deletedCandidate;
     }
-    
-
 }
