@@ -11,6 +11,7 @@ async function bootstrap() {
     transform: true,        // Convierte tipos automáticamente (ej: string a number)
   }));
 
+  app.enableCors();
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

@@ -4,6 +4,7 @@ import { Candidate } from './models/Candidate';
 import { Model } from 'mongoose';
 import { CreateCandidateDto } from './dto/create-candidate.dto';
 import { UpdateCandidateDto } from './dto/update-candidate.dto';
+import * as XLSX from 'xlsx';
 
 
 @Injectable()
@@ -21,6 +22,24 @@ export class CandidatesService {
         const newCandidate = new this.candidateModel(candidate);
         return await newCandidate.save();
     }
+
+    async createWithExcel(file: Express.Multer.File, name: string, surname: string) {
+        const workbook = XLSX.read(file.buffer, { type: 'buffer' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        
+        const excelData = XLSX.utils.sheet_to_json(firstSheet)[0] as any;
+
+        const candidate: CreateCandidateDto = {
+            name,
+            surname,
+            seniority: excelData.Seniority,
+            years: excelData.Years,
+            availability: String(excelData.Availability).toLowerCase() === 'true'
+        };
+
+        return this.createCandidate(candidate);
+    }
+
 
     async findCandidateById(id: string): Promise<Candidate> {
         const findCandidate = await this.candidateModel.findById(id).exec();
