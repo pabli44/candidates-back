@@ -23,7 +23,7 @@ export class CandidatesService {
     }
 
     async findCandidateById(id: string): Promise<Candidate> {
-        const findCandidate = await this.candidateModel.findById(id);
+        const findCandidate = await this.candidateModel.findById(id).exec();
         if(!findCandidate){
             throw new NotFoundException(`Candidate with id ${id} not found`);
         }
@@ -48,7 +48,7 @@ export class CandidatesService {
     }
 
     async deleteById(id: string): Promise<Candidate> {
-        const deletedCandidate = await this.candidateModel.findByIdAndDelete(id);
+        const deletedCandidate = await this.candidateModel.findByIdAndDelete(id).exec();
         if (!deletedCandidate) {
             throw new NotFoundException(`Candidate with id ${id} not found`);
         }
