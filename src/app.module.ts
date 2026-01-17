@@ -1,16 +1,21 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { CandidatesController } from './candidates/candidates.controller';
-import { CandidatesService } from './candidates/candidates.service';
-import { CreateCandidateDto } from './candidates/dto/create-candidate.dto';
-import { UpdateCandidateDto} from './candidates/dto/update-candidate.dto';
-import { CandidatesModule } from './candidates/candidates.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [CandidatesModule, MongooseModule.forRoot('mongodb://localhost/candidates-db')],
-  controllers: [AppController, CandidatesController],
-  providers: [AppService, CandidatesService, CreateCandidateDto, UpdateCandidateDto]
+  imports: [
+    // 1. Asegúrate de cargar el ConfigModule
+    ConfigModule.forRoot({
+      isGlobal: true, 
+    }),
+    // 2. Usa MongooseModule.forRootAsync para leer la variable de Render
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGODB_URI'), // <--- DEBE coincidir con el nombre en Render
+      }),
+    }),
+  ],
 })
 export class AppModule {}
